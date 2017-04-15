@@ -17,7 +17,7 @@ public class Subscriber {
 	public void setMessages(ArrayList<Message> Messages){
 		this.Messages=Messages;
 	}
-
+	
 	// To print all received messages to the console
 	public void print(){
 		Iterator<Message> iter=Messages.iterator();
