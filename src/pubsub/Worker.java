@@ -14,6 +14,10 @@ public class Worker {
 		msgQueue.add(msg);
 	}
 	
+	public HashMap<String, ArrayList<Subscriber>> fetchSubscribers(){
+		return this.subTopList;
+	}
+	
 	public void insertSubscriber(Subscriber sub, String topic){
 		ArrayList<Subscriber> tmp;
 		if(subTopList.containsKey(topic)){
