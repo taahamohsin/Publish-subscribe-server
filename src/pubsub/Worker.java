@@ -2,13 +2,14 @@ package pubsub;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import pubsub.Message;
 import pubsub.Subscriber;
 
 public class Worker {
+	
 	HashMap<String, ArrayList<Subscriber>> subTopList=new HashMap<String, ArrayList<Subscriber>>();
-	ConcurrentLinkedDeque<Message> msgQueue=new ConcurrentLinkedDeque<Message>();
+	ConcurrentLinkedQueue<Message> msgQueue=new ConcurrentLinkedQueue<Message>();
 	
 	public void insertMessage(Message msg){
 		msgQueue.add(msg);
@@ -76,8 +77,7 @@ public class Worker {
 					ArrayList<Message> messages=sub.fetchMessages();
 					messages.add(tmp);
 					sub.setMessages(messages);
-				}
-				
+				}			
 			}
 		}
 		else{
