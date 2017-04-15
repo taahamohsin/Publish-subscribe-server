@@ -12,7 +12,9 @@ public class Worker {
 	HashMap<String, ArrayList<Subscriber>> topSubList = new HashMap<String, ArrayList<Subscriber>>();
 	// to store the published messages
 	ConcurrentLinkedQueue<Message> msgQueue = new ConcurrentLinkedQueue<Message>();
-
+	// stores list of available topics
+	ArrayList<String> topList=new ArrayList<String>();
+	
 	public void insertMessage(Message msg) {
 		msgQueue.add(msg);
 	}
