@@ -16,6 +16,7 @@ public class Subscriber {
 		return Messages;
 	} 
 	
+	// Accessor method for thread ids
 	public long fetchID(){
 		return this.thread_id;
 	} 
@@ -27,6 +28,7 @@ public class Subscriber {
 		this.Messages=Messages;
 	}
 	
+	// Mutator method for thread ids
 	public void setID(long id){
 		this.thread_id=id;
 	}
