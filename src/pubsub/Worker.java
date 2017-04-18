@@ -17,6 +17,8 @@ public class Worker {
 	ConcurrentLinkedQueue<Message> msgQueue = new ConcurrentLinkedQueue<Message>();
 	// stores list of available topics
 	ArrayList<String> topList=new ArrayList<String>();
+	//TODO: maybe use ArrayList instead
+	public static String[] list = {"Topic 1", "Topic 2","Topic 3","Topic 4","Topic 5"};
 	
 	private ServerSocket ss;
 	
@@ -40,7 +42,7 @@ public class Worker {
 				Socket socket = ss.accept();
 				System.out.println("Client connected from " + socket.getInetAddress());
 				
-				Subscriber s = new Subscriber(socket, id);
+				Subscriber s = new Subscriber(socket, id, list);
 				id++;
 				s.start();
 			} catch (IOException e) {
