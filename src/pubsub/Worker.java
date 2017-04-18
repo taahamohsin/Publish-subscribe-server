@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import pubsub.Message;
 import pubsub.Subscriber;
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public class Worker {
 
@@ -14,6 +17,38 @@ public class Worker {
 	ConcurrentLinkedQueue<Message> msgQueue = new ConcurrentLinkedQueue<Message>();
 	// stores list of available topics
 	ArrayList<String> topList=new ArrayList<String>();
+	
+	private ServerSocket ss;
+	
+	/* Constructor */
+	public Worker(int port) {
+		try {
+			this.ss = new ServerSocket(port);
+			System.out.println("Worker Socket connected to port " + port);
+		} catch (IOException e) {
+			System.out.println("Error in Worker Constructor");
+			System.exit(1);
+		}
+	}
+	
+	
+	public void connect() {
+		int id = 0;
+		while (true) {
+			System.out.println("Worker waiting for client to connect");
+			try {
+				Socket socket = ss.accept();
+				System.out.println("Client connected from " + socket.getInetAddress());
+				
+				Subscriber s = new Subscriber(socket, id);
+				id++;
+				s.start();
+			} catch (IOException e) {
+				System.out.println("Error in Worker connect");
+			}
+			
+		}
+	}
 	
 	public void insertMessage(Message msg) {
 		msgQueue.add(msg);
