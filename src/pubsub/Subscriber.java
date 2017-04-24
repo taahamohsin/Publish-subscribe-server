@@ -14,6 +14,7 @@ public class Subscriber extends Thread {
 	private Socket socket;
 	//TODO: maybe use ArrayList instead
 	private String[] topics;
+	
 	private ArrayList<String> myTopics = new ArrayList<String>();
 	
 	
@@ -93,11 +94,16 @@ public class Subscriber extends Thread {
 			for (int i = 0; i < topics.length; i ++) {
 				out.println(topics[i]);
 			}
-//			String line = null;
-//			while ((line =in.readLine()) != null) {
-//				System.out.println("Received: " + line);
-//				out.println(line.toUpperCase());
-//			}
+
+			//read the reply
+			int length = Integer.parseInt(in.readLine());
+			System.out.println("\nUser selected " + length +" topics");
+			System.out.println("------------------------");
+			for (int i = 0; i < length; i++) {
+				String topic = in.readLine();
+				System.out.println(topic);
+				myTopics.add(topic);
+			}
 
 			
 		} catch (IOException e) {

@@ -18,7 +18,7 @@ public class Worker {
 	// stores list of available topics
 	ArrayList<String> topList=new ArrayList<String>();
 	//TODO: maybe use ArrayList instead
-	public static String[] list = {"Topic 1", "Topic 2","Topic 3","Topic 4","Topic 5"};
+	public static String[] list = {"Topic A", "Topic B","Topic C","Topic D","Topic E"};
 	
 	private ServerSocket ss;
 	
