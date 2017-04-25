@@ -6,11 +6,10 @@ import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Scanner;
+import java.util.Observable;
 
-public class Subscriber extends Thread implements Observer {
+public class Subscriber extends Thread {
 	
 	private ArrayList<Message> Messages=new ArrayList<Message>(); // to store all received messages
 	private long thread_id;
@@ -152,11 +151,6 @@ public class Subscriber extends Thread implements Observer {
 		System.out.println("Thread " + this.thread_id + " finished");
 	}
 
-	@Override
-	public void update(Observable o, Object arg) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	
 	
