@@ -8,27 +8,29 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Scanner;
 
 public class Subscriber extends Thread implements Observer {
 	
 	private ArrayList<Message> Messages=new ArrayList<Message>(); // to store all received messages
 	private long thread_id;
 	private Socket socket;
+	
 	//TODO: maybe use ArrayList instead
-	private String[] topics;
+	private ArrayList<String> topics;
 	
 	private ArrayList<String> myTopics = new ArrayList<String>();
 	
 	
 	/* Constructor */
-	public Subscriber(Socket s, long id, String[] list) {
+	public Subscriber(Socket s, long id, ArrayList<String> list) {
 		this.socket = s;
 		this.thread_id = id;
 		this.setTopics(list);
 	}
 	/* Accessor methods */
 	
-	public String[] getTopics() {
+	public ArrayList<String> getTopics() {
 		return this.topics;
 	}
 	
@@ -55,7 +57,7 @@ public class Subscriber extends Thread implements Observer {
 	}
 	
 	
-	public void setTopics(String[] topics) {
+	public void setTopics(ArrayList<String> topics) {
 		this.topics = topics;
 	}
 	
@@ -92,9 +94,9 @@ public class Subscriber extends Thread implements Observer {
 		System.out.println("Subscriber on Thread " + this.thread_id + " started");
 		try (PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 				BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-			out.println(topics.length);
-			for (int i = 0; i < topics.length; i ++) {
-				out.println(topics[i]);
+			out.println(topics.size());
+			for (int i = 0; i < topics.size(); i ++) {
+				out.println(topics.get(i));
 			}
 
 			//read the reply
@@ -105,6 +107,41 @@ public class Subscriber extends Thread implements Observer {
 				String topic = in.readLine();
 				System.out.println(topic);
 				myTopics.add(topic);
+			}
+			
+			Scanner sc = new Scanner(System.in);
+			//now start transmitting the messages
+			while (true) {
+				while (!Messages.isEmpty()) {
+					System.out.println("Message queue not empty");
+					System.out.println(Messages.toString());
+					Message m = Messages.get(0);
+					Messages.remove(0);
+					out.println(m.fetchTopic());
+					out.println(m.fetchPLoad());
+				}
+				
+				//TODO: for debugging purposes , eventually this logic should be moved to Worker
+				System.out.println("\nAny message to add? Enter'q' to quit");
+				String input = "";
+				while (!input.equals("q")) {
+					System.out.print("Topic? ");
+					input = sc.nextLine();
+					if (input.equals("q")) break;
+					System.out.print("Content? ");
+					String content = sc.nextLine();
+					Message m = new Message(content, input);
+					if (myTopics.indexOf(input) != -1) {
+						Messages.add(m);
+						System.out.println("Topic Added:" + m.toString());
+					} else {
+						System.out.println("Topic not added, client not interested in " + m.fetchTopic());
+					}
+					input = content;
+				}
+				
+				
+				
 			}
 
 			

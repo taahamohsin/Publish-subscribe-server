@@ -21,12 +21,15 @@ public class Worker implements Observer{
 	// stores list of available topics
 	ArrayList<String> topList=new ArrayList<String>();
 	//TODO: maybe use ArrayList instead
-	public static String[] list = {"Topic A", "Topic B","Topic C","Topic D","Topic E"};
+	private String[] topics = {"Topic A", "Topic B","Topic C","Topic D","Topic E"};
 	
 	private ServerSocket ss;
 	
 	/* Constructor */
 	public Worker(int port) {
+		for (String topic : this.topics) {
+			topList.add(topic);
+		}
 		try {
 			this.ss = new ServerSocket(port);
 			System.out.println("Worker Socket connected to port " + port);
@@ -45,7 +48,7 @@ public class Worker implements Observer{
 				Socket socket = ss.accept();
 				System.out.println("Client connected from " + socket.getInetAddress());
 				
-				Subscriber s = new Subscriber(socket, id, list);
+				Subscriber s = new Subscriber(socket, id, topList);
 				id++;
 				s.start();
 			} catch (IOException e) {
