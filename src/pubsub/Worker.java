@@ -2,14 +2,17 @@ package pubsub;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
 import pubsub.Message;
 import pubsub.Subscriber;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Worker {
+public class Worker implements Observer{
 
 	// To store the topic-to-subscriber mappings
 	HashMap<String, ArrayList<Subscriber>> topSubList = new HashMap<String, ArrayList<Subscriber>>();
@@ -131,4 +134,13 @@ public class Worker {
 		}
 	}
 
+
+	@Override
+	public void update(Observable o, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	
 }
