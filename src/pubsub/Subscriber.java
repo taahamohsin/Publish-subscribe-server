@@ -109,6 +109,11 @@ public class Subscriber extends Thread {
 			Scanner sc = new Scanner(System.in);
 			//now start transmitting the messages
 			while (true) {
+				
+					while (in.ready()) {
+						System.out.println("FROM CLIENT: " + in.readLine());
+					}
+				
 				while (!Messages.isEmpty()) {
 					System.out.println("Message queue not empty");
 					System.out.println(Messages.toString());
