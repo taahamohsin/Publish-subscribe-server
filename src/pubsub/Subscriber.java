@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Scanner;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Observable;
 
 public class Subscriber extends Thread {
@@ -15,9 +16,10 @@ public class Subscriber extends Thread {
 	private long thread_id;
 	private Socket socket;
 	//TODO: maybe use ArrayList instead
-	private ArrayList<String> topics;
+	private ArrayList<String> topics; // available topics
 	
-	private ArrayList<String> myTopics = new ArrayList<String>();
+	
+	private ArrayList<String> myTopics = new ArrayList<String>(); // selected topics
 	
 	/* Constructor */
 	public Subscriber(Socket s, long id, ArrayList<String> list) {
@@ -25,6 +27,7 @@ public class Subscriber extends Thread {
 		this.thread_id = id;
 		this.setTopics(list);
 	}
+	
 	/* Accessor methods */
 	
 	public ArrayList<String> getTopics() {
@@ -104,11 +107,14 @@ public class Subscriber extends Thread {
 				String topic = in.readLine();
 				System.out.println(topic);
 				myTopics.add(topic);
+				(Worker.topSubMap.get(topic)).add(this); // add subscriber to front of ArrayList
 			}
 			
 			Scanner sc = new Scanner(System.in);
 			//now start transmitting the messages
 			while (true) {
+				
+				System.out.println(Worker.topSubMap.toString());
 				
 					while (in.ready()) {
 						System.out.println("FROM CLIENT: " + in.readLine());
