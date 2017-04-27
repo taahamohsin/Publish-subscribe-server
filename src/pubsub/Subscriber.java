@@ -14,12 +14,10 @@ public class Subscriber extends Thread {
 	private ArrayList<Message> Messages=new ArrayList<Message>(); // to store all received messages
 	private long thread_id;
 	private Socket socket;
-	
 	//TODO: maybe use ArrayList instead
 	private ArrayList<String> topics;
 	
 	private ArrayList<String> myTopics = new ArrayList<String>();
-	
 	
 	/* Constructor */
 	public Subscriber(Socket s, long id, ArrayList<String> list) {
@@ -142,10 +140,7 @@ public class Subscriber extends Thread {
 						System.out.println("Topic not added, client not interested in " + m.fetchTopic());
 					}
 					input = content;
-				}
-				
-				
-				
+				}	
 			}
 
 			

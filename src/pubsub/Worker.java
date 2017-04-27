@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
 import pubsub.Message;
 import pubsub.Subscriber;
 import java.io.*;
@@ -75,7 +74,7 @@ public class Worker implements Observer{
 			tmp = topSubList.get(topic);
 			tmp.add(sub); // add to the existing arraylist
 			topSubList.put(topic, tmp); // put arraylist back into the hashmap
-		} else { // if it does not already exist (is this needed?)
+		} else { // if it does not already exist
 			tmp = new ArrayList<Subscriber>(); // create arraylist to store subscriber list
 			tmp.add(sub);
 			topSubList.put(topic, tmp); // insert new arraylist into the hashmap
@@ -136,11 +135,10 @@ public class Worker implements Observer{
 			System.out.println("No received messages to display.");
 		}
 	}
-
-
+	
+	
 	@Override
 	public void update(Observable o, Object arg) {
-		// TODO Auto-generated method stub
 		
 	}
 
