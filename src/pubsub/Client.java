@@ -25,13 +25,16 @@ public class Client {
 			while (true) {
 				try {
 					String line = read.readLine();
-					System.out.println("Printed to Socket" + line);
-					ps.println(line);
+					if (line != null) {
+						System.out.println("Printed to Socket " + line);
+						ps.println(line);
+					}
+						
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+
 			}
 			//System.out.println("Writer Thread finished");
 		}
@@ -48,12 +51,12 @@ public class Client {
 		public void run() {
 			System.out.println("Listener Thread started");
 			try {
-				do {
+				while (true) {
 					String topic = read.readLine();
 					String content = read.readLine();
 					System.out.printf("\nNew content in [%s]\n", topic);
 					System.out.println(content);
-				} while (read.readLine() != null);
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -68,7 +71,7 @@ public class Client {
 				BufferedReader read = new BufferedReader
 						(new InputStreamReader(s.getInputStream()));
 				PrintStream ps = new PrintStream(s.getOutputStream());
-						Scanner sc = new Scanner(System.in);) {
+				Scanner sc = new Scanner(System.in);) {
 			int length = Integer.parseInt(read.readLine());
 			String topics[] = new String[length];
 
@@ -94,7 +97,7 @@ public class Client {
 			}
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-			
+
 			//Start up the other thread
 			Writer w = new Writer(ps, in);
 			w.start();

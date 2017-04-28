@@ -10,8 +10,8 @@ public class Message {
 	}
 
 	// Alternate constructor for the Message class
-	public Message(String pLoad, String topic) {
-		this.pLoad = pLoad;
+	public Message(String topic, String load) {
+		this.pLoad = load;
 		this.topic = topic;
 	}
 
@@ -40,6 +40,6 @@ public class Message {
 	}
 	
 	public String toString() {
-		return "["+this.topic + "] " + this.pLoad;
+		return "Topic: "+this.topic + " Content: " + this.pLoad;
 	}
 }

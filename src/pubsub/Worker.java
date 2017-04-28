@@ -15,7 +15,7 @@ import java.util.concurrent.*;
 public class Worker implements Observer {
 
 	// To store the topic-to-subscriber mappings
-	protected static ConcurrentHashMap<String, ArrayList<Subscriber>> topSubMap = new ConcurrentHashMap<String, ArrayList<Subscriber>>();
+	protected static ConcurrentHashMap<String, ArrayList<Message>> topSubMap = new ConcurrentHashMap<String, ArrayList<Message>>();
 
 	// to store the published messages
 	// ConcurrentLinkedQueue<Message> msgQueue = new
@@ -31,7 +31,7 @@ public class Worker implements Observer {
 	public Worker(int port) {
 		for (String topic : this.topics) {
 			topList.add(topic);
-			topSubMap.put(topic, new ArrayList<Subscriber>());
+			topSubMap.put(topic, new ArrayList<Message>());
 		}
 		try {
 			this.ss = new ServerSocket(port);
@@ -56,8 +56,8 @@ public class Worker implements Observer {
 			} catch (IOException e) {
 				System.out.println("Error in Worker connect");
 			}
-			if (topSubMap.get("Topic A").size() != 0)
-			topSubMap.get("Topic A").get(0).pushMessage("Hehehehehe");
+			
+			
 		}
 		
 	}
@@ -68,40 +68,40 @@ public class Worker implements Observer {
 	// }
 
 	// Retrieves the mapping of topics to subscribers
-	public ConcurrentHashMap<String, ArrayList<Subscriber>> fetchSubscribers() {
-		return this.topSubMap;
+	public ConcurrentHashMap<String, ArrayList<Message>> fetchSubscribers() {
+		return Worker.topSubMap;
 	}
 
-	// Adds a new subscriber for a specific topic
-	public void insertSubscriber(Subscriber sub, String topic) {
-		ArrayList<Subscriber> tmp;
-		if (topSubMap.containsKey(topic)) { // if the topic already exists
-			tmp = topSubMap.get(topic);
-			tmp.add(sub); // add to the existing arraylist
-			topSubMap.put(topic, tmp); // put arraylist back into the hashmap
-		} else { // if it does not already exist
-			tmp = new ArrayList<Subscriber>(); // create arraylist to store
-												// subscriber list
-			tmp.add(sub);
-			topSubMap.put(topic, tmp); // insert new arraylist into the hashmap
-		}
-	}
+//	// Adds a new subscriber for a specific topic
+//	public void insertSubscriber(String sub, String topic) {
+//		ArrayList<String> tmp;
+//		if (topSubMap.containsKey(topic)) { // if the topic already exists
+//			tmp = topSubMap.get(topic);
+//			tmp.add(sub); // add to the existing arraylist
+//			topSubMap.put(topic, tmp); // put arraylist back into the hashmap
+//		} else { // if it does not already exist
+//			tmp = new ArrayList<String>(); // create arraylist to store
+//												// subscriber list
+//			tmp.add(sub);
+//			topSubMap.put(topic, tmp); // insert new arraylist into the hashmap
+//		}
+//	}
 
 	// removes an existing subscriber from the list of subscribers for a given
 	// topic
-	public void deleteSubscriber(Subscriber sub, String topic) {
-		if (topSubMap.containsKey(topic)) { // if the given topic actually
-												// exists
-			ArrayList<Subscriber> tmp = topSubMap.get(topic); // retrieve
-																// arraylist of
-																// subsctibers
-			tmp.remove(sub);
-			topSubMap.put(topic, tmp); // remove relevant subscriber and insert
-										// arraylist back into hashmap
-		} else { // output error message if the given topic does not exist
-			System.out.println("There is no such subscriber for that topic!");
-		}
-	}
+//	public void deleteSubscriber(Subscriber sub, String topic) {
+//		if (topSubMap.containsKey(topic)) { // if the given topic actually
+//												// exists
+//			ArrayList<String> tmp = topSubMap.get(topic); // retrieve
+//																// arraylist of
+//																// subsctibers
+//			tmp.remove(sub);
+//			topSubMap.put(topic, tmp); // remove relevant subscriber and insert
+//										// arraylist back into hashmap
+//		} else { // output error message if the given topic does not exist
+//			System.out.println("There is no such subscriber for that topic!");
+//		}
+//	}
 
 	// retrieves all messages for a given subscriber at the point when it is
 	// called

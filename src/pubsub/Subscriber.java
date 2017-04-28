@@ -14,7 +14,9 @@ public class Subscriber extends Thread {
 
 	private ArrayList<Message> Messages=new ArrayList<Message>(); // to store all received messages
 	private long thread_id;
-	private Socket socket;
+	//private Socket socket;
+	private PrintWriter writer;
+	private BufferedReader reader;
 	//TODO: maybe use ArrayList instead
 	private ArrayList<String> topics; // available topics
 
@@ -23,9 +25,15 @@ public class Subscriber extends Thread {
 
 	/* Constructor */
 	public Subscriber(Socket s, long id, ArrayList<String> list) {
-		this.socket = s;
+		//this.socket = s;
 		this.thread_id = id;
 		this.setTopics(list);
+		try {
+			this.writer = new PrintWriter(s.getOutputStream(), true);
+			this.reader = new BufferedReader(new InputStreamReader(s.getInputStream()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/* Accessor methods */
@@ -45,12 +53,8 @@ public class Subscriber extends Thread {
 	} 
 	
 	public void pushMessage(String message) {
-		try (PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true)) {
-			out.println(message);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		System.out.println("Hey were here");
+		this.writer.println(message);
 		
 	}
 
@@ -102,22 +106,20 @@ public class Subscriber extends Thread {
 
 	public void run() {
 		System.out.println("Subscriber on Thread " + this.thread_id + " started");
-		try (PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-				BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
-			out.println(topics.size());
+		try {
+			writer.println(topics.size());
 			for (int i = 0; i < topics.size(); i ++) {
-				out.println(topics.get(i));
+				writer.println(topics.get(i));
 			}
 
 			//read the reply
-			int length = Integer.parseInt(in.readLine());
-			System.out.println("\nUser selected " + length +" topics");
+			int length = Integer.parseInt(reader.readLine());
+			System.out.println("\nClient " + this.thread_id + " selected " + length +" topics");
 			System.out.println("------------------------");
 			for (int i = 0; i < length; i++) {
-				String topic = in.readLine();
+				String topic = reader.readLine();
 				System.out.println(topic);
 				myTopics.add(topic);
-				(Worker.topSubMap.get(topic)).add(this); // add subscriber to front of ArrayList
 			}
 
 			Scanner sc = new Scanner(System.in);
@@ -126,18 +128,27 @@ public class Subscriber extends Thread {
 
 				//System.out.println(Worker.topSubMap.toString());
 
-				while (in.ready()) {
-					System.out.println("FROM CLIENT "+ this.thread_id + ": " + in.readLine());
+				if (reader.ready()) {
+					String line = reader.readLine();
+					System.out.println("FROM CLIENT "+ this.thread_id + ": " + line);
+					if(line.contains("Topic")) {
+						String[] arr = line.split(":");
+						Message m = new Message(arr[0], arr[1]);
+						System.out.println("New Message received from Client" + this.thread_id);
+						System.out.println(m.toString());
+						Worker.topSubMap.get(m.fetchTopic()).add(m);
+					}
 				}
 
-				while (!Messages.isEmpty()) {
+				for (String topic : myTopics) {
+					while (!Worker.topSubMap.get(topic).isEmpty()) {
 					System.out.println("Message queue not empty");
-					System.out.println(Messages.toString());
-					Message m = Messages.get(0);
-					Messages.remove(0);
-					out.println(m.fetchTopic());
-					out.println(m.fetchPLoad());
+					Message m = Worker.topSubMap.get(topic).get(0);
+					Worker.topSubMap.get(topic).remove(0);
+					writer.println(m);
 				}
+				}
+				
 
 				//				//TODO: for debugging purposes , eventually this logic should be moved to Worker
 				//				System.out.println("\nAny message to add? Enter'q' to quit");
