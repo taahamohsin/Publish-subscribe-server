@@ -56,7 +56,8 @@ public class Worker implements Observer {
 			} catch (IOException e) {
 				System.out.println("Error in Worker connect");
 			}
-		
+			if (topSubMap.get("Topic A").size() != 0)
+			topSubMap.get("Topic A").get(0).pushMessage("Hehehehehe");
 		}
 		
 	}
