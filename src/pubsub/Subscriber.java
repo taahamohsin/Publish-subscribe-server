@@ -1,6 +1,7 @@
 package pubsub;
 
 import pubsub.Message;
+import pubsub.Content;
 
 import java.io.*;
 import java.net.Socket;
@@ -51,11 +52,11 @@ public class Subscriber extends Thread {
 	public long fetchID(){
 		return this.thread_id;
 	} 
-	
+
 	public void pushMessage(String message) {
 		System.out.println("Hey were here");
 		this.writer.println(message);
-		
+
 	}
 
 	/* Mutator Methods */
@@ -94,15 +95,15 @@ public class Subscriber extends Thread {
 	}
 
 	// To print all received messages to the console
-	public void print(){
-		Iterator<Message> iter=Messages.iterator();
-		while(iter.hasNext())
-		{
-			Message tmp=iter.next();
-			System.out.println("Topic: "+tmp.fetchTopic()+" and payload: "+
-					tmp.fetchPLoad());
-		}
-	}
+//	public void print(){
+//		Iterator<Message> iter=Messages.iterator();
+//		while(iter.hasNext())
+//		{
+//			Message tmp=iter.next();
+//			System.out.println("Topic: "+tmp.fetchTopic()+" and payload: "+
+//					tmp.fetchPLoad());
+//		}
+//	}
 
 	public void run() {
 		System.out.println("Subscriber on Thread " + this.thread_id + " started");
@@ -120,6 +121,7 @@ public class Subscriber extends Thread {
 				String topic = reader.readLine();
 				System.out.println(topic);
 				myTopics.add(topic);
+				Worker.topSubMap.get(topic).subscribed++;
 			}
 
 			Scanner sc = new Scanner(System.in);
@@ -133,22 +135,32 @@ public class Subscriber extends Thread {
 					System.out.println("FROM CLIENT "+ this.thread_id + ": " + line);
 					if(line.contains("Topic")) {
 						String[] arr = line.split(":");
-						Message m = new Message(arr[0], arr[1]);
+						if (arr.length < 2) {
+							continue;
+						}
+						Content c = new Content(arr[0], arr[1]);
 						System.out.println("New Message received from Client" + this.thread_id);
-						System.out.println(m.toString());
-						Worker.topSubMap.get(m.fetchTopic()).add(m);
+						System.out.println(c.toString());
+						Worker.topSubMap.get(c.fetchTopic()).content.add(c);
 					}
 				}
 
 				for (String topic : myTopics) {
-					while (!Worker.topSubMap.get(topic).isEmpty()) {
-					System.out.println("Message queue not empty");
-					Message m = Worker.topSubMap.get(topic).get(0);
-					Worker.topSubMap.get(topic).remove(0);
-					writer.println(m);
+					for (int i = 0; i < Worker.topSubMap.get(topic).content.size(); i++) {
+						System.out.println("Message queue not empty");
+						Content m = Worker.topSubMap.get(topic).content.get(i);
+						m.incrementReadCount();
+						if (m.getReadCount() == Worker.topSubMap.get(topic).subscribed) {
+							Worker.topSubMap.get(topic).content.remove(i);
+							System.out.println("Message deleted: " + m.toString());
+							System.out.println("subscribed: " + Worker.topSubMap.get(topic).subscribed + "Read count: " + m.getReadCount());
+						}
+						
+						writer.println(m);
+						System.out.println("Message delivery " + m.getReadCount());
+					}
 				}
-				}
-				
+
 
 				//				//TODO: for debugging purposes , eventually this logic should be moved to Worker
 				//				System.out.println("\nAny message to add? Enter'q' to quit");

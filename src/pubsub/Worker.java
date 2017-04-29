@@ -12,10 +12,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.*;
 
-public class Worker implements Observer {
+public class Worker {
 
 	// To store the topic-to-subscriber mappings
-	protected static ConcurrentHashMap<String, ArrayList<Message>> topSubMap = new ConcurrentHashMap<String, ArrayList<Message>>();
+	protected static ConcurrentHashMap<String, Message> topSubMap = new ConcurrentHashMap<String, Message>();
 
 	// to store the published messages
 	// ConcurrentLinkedQueue<Message> msgQueue = new
@@ -31,7 +31,7 @@ public class Worker implements Observer {
 	public Worker(int port) {
 		for (String topic : this.topics) {
 			topList.add(topic);
-			topSubMap.put(topic, new ArrayList<Message>());
+			topSubMap.put(topic, new Message());
 		}
 		try {
 			this.ss = new ServerSocket(port);
@@ -68,7 +68,7 @@ public class Worker implements Observer {
 	// }
 
 	// Retrieves the mapping of topics to subscribers
-	public ConcurrentHashMap<String, ArrayList<Message>> fetchSubscribers() {
+	public ConcurrentHashMap<String, Message> fetchSubscribers() {
 		return Worker.topSubMap;
 	}
 
@@ -164,9 +164,5 @@ public class Worker implements Observer {
 		}
 	}**/
 
-	@Override
-	public void update(Observable o, Object arg) {
-
-	}
 
 }
