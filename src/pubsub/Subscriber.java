@@ -6,10 +6,7 @@ import pubsub.Content;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Scanner;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.Observable;
 
 public class Subscriber extends Thread {
 
