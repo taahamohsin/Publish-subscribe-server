@@ -6,6 +6,7 @@ import pubsub.Content;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -16,17 +17,16 @@ public class Subscriber extends Thread {
 	//private Socket socket;
 	private PrintWriter writer;
 	private BufferedReader reader;
-	//TODO: maybe use ArrayList instead
 	private ArrayList<String> topics; // available topics
 
 
 	private HashMap<String, Integer> myTopicMap = new HashMap<String, Integer>(); // selected topics
 
 	/* Constructor */
-	public Subscriber(Socket s, long id, ArrayList<String> list) {
+	public Subscriber(Socket s, long id) {
 		//this.socket = s;
 		this.thread_id = id;
-		this.setTopics(list);
+		this.topics = new ArrayList<String>(Worker.topSubMap.keySet());
 		try {
 			this.writer = new PrintWriter(s.getOutputStream(), true);
 			this.reader = new BufferedReader(new InputStreamReader(s.getInputStream()));
@@ -41,7 +41,7 @@ public class Subscriber extends Thread {
 		return this.topics;
 	}
 
-	// Accessor method for re ceived messages
+	// Accessor method for received messages
 	public ArrayList<Message> fetchMessages(){
 		return Messages;
 	} 
@@ -75,22 +75,26 @@ public class Subscriber extends Thread {
 	}
 
 	public void addTopic(String topic) {
-		//TODO: do we want to do this? This could be potentially hard
-		// in the sense that any changes made here need to be updated by the server as well
+		if (myTopicMap.containsKey(topic)) {
+			System.out.println("already subscribed to");
+		} else {
+			myTopicMap.put(topic, 0);
+		}
+		if (!Worker.topSubMap.containsKey(topic)) {
+			Worker.topSubMap.put(topic, new Message());
+		}
+		
 	}
 
 	public void removeTopic(String topic) {
-		//TODO: do we want to do this? This could be potentially hard
-		// in the sense that any changes made here need to be updated by the server as well
+		if (myTopicMap.containsKey(topic)) {
+			myTopicMap.remove(topic);
+		} else {
+			writer.println("System Warning");
+			writer.println("You're not subscribed to: "+ topic);
+		}
 	}
 
-	public void addSubscribedTopic(String topic) {
-		//TODO: push in new topic to the ArrayList myTopic
-	}
-
-	public void removeSubscribedTopic(String topic) {
-		//TODO:  Remove a topic from the ArrayList myTopic
-	}
 
 	public void run() {
 		System.out.println("Subscriber on Thread " + this.thread_id + " started");
@@ -118,14 +122,23 @@ public class Subscriber extends Thread {
 				if (reader.ready()) {
 					String line = reader.readLine();
 					System.out.println("FROM CLIENT "+ this.thread_id + ": " + line);
-					if(line.contains("Topic")) {
-						String[] arr = line.split(":");
+					if(line.contains("Subscribe:")) {
+						String[] arr = line.split(": ");
+						addTopic(arr[1]);
+					} else if (line.contains("View Topics")) {
+						writer.println("Topic List");
+						writer.println(myTopicMap.keySet().toString());
+					} else if (line.contains("Unsubscribe:")) {
+						String[] arr = line.split(": ");
+						removeTopic(arr[1]);
+					} else if(line.contains("Topic:")) {
+						String[] arr = line.split(": ");
 						if (arr.length < 2) {
 							continue;
 						}
 						Content c = new Content(arr[0], arr[1]);
 						System.out.println("New Message received from Client" + this.thread_id);
-						System.out.println(c.toString());
+						//System.out.println(c.toString());
 						Worker.topSubMap.get(c.fetchTopic()).content.add(c);
 					}
 				}

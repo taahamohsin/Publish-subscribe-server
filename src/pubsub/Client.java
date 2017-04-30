@@ -9,11 +9,12 @@ import java.util.Scanner;
 public class Client {
 	public static final String  HOST = "localhost";
 	public static final int PORT = 8888;
-
+	
 	static class Writer extends Thread {
 
 		private PrintStream ps;
 		private BufferedReader read;
+		
 
 		public Writer(PrintStream ps, BufferedReader read) {
 			this.ps = ps;
@@ -22,7 +23,9 @@ public class Client {
 
 		public void run() {
 			System.out.println("Writer Thread started");
+			
 			while (true) {
+				
 				try {
 					String line = read.readLine();
 					if (line != null) {
@@ -42,6 +45,7 @@ public class Client {
 
 	static class Listener extends Thread {
 
+		private PrintStream ps;
 		private BufferedReader read;
 
 		public Listener(BufferedReader r) {
@@ -54,6 +58,7 @@ public class Client {
 				while (true) {
 					String topic = read.readLine();
 					String content = read.readLine();
+					
 					if (topic != null && content != null ) {
 						System.out.printf("\nNew content in [%s]\n", topic);
 						System.out.println(content);	
@@ -111,6 +116,7 @@ public class Client {
 			Writer w = new Writer(ps, in);
 			w.start();
 
+			PrintStream ps2 = new PrintStream(s.getOutputStream());
 			Listener l = new Listener(read);
 			l.start();
 
