@@ -40,6 +40,8 @@ public class Worker {
 
 
 		while (true) {
+			printSelections();
+			
 			System.out.println(socketList.size());
 			int selected = askIntent();
 			switch (selected) {

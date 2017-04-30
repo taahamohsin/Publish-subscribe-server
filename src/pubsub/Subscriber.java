@@ -124,6 +124,8 @@ public class Subscriber extends Thread {
 			//now start transmitting the messages
 			while (true) {
 
+				Worker.printSelections();
+				
 				if (reader.ready()) {
 					String line = reader.readLine();
 					System.out.println("FROM CLIENT "+ this.thread_id + ": " + line);
@@ -136,12 +138,14 @@ public class Subscriber extends Thread {
 					} else if (line.contains("Unsubscribe:")) {
 						String[] arr = line.split(": ");
 						removeTopic(arr[1]);
-					} else if(line.contains("Topic")) {
-						String[] arr = line.split(": ");
-						if (arr.length < 2) {
+					} else if(line.contains("Post")) {
+						String[] arr = line.split(" ");
+						if (arr.length < 3) {
 							continue;
+						} else if (line.contains("All Topics")) {
+							writer.println(Worker.topSubMap.keySet().toString());
 						}
-						Content c = new Content(arr[0], arr[1]);
+						Content c = new Content(arr[1].substring(0, arr[1].length()-2), arr[3]);
 						System.out.println("New Message received from Client" + this.thread_id);
 						//System.out.println(c.toString());
 						Worker.topSubMap.get(c.fetchTopic()).content.add(c);
