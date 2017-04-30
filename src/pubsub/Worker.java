@@ -1,6 +1,9 @@
 package pubsub;
 
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
+
 import pubsub.Message;
 import pubsub.Subscriber;
 import java.io.*;
@@ -16,7 +19,9 @@ public class Worker {
 	// stores list of available topics
 	ArrayList<String> topList = new ArrayList<String>();
 	// TODO: maybe use ArrayList instead
-	private String[] topics = { "Topic A", "Topic B", "Topic C", "Topic D", "Topic E" };
+	private static String[] topics = { "Topic A", "Topic B", "Topic C", "Topic D", "Topic E" };
+	
+	private static ArrayList<Socket> socketList = new ArrayList<Socket>();
 
 	private ServerSocket ss;
 
@@ -32,8 +37,20 @@ public class Worker {
 		    }
 		}).start();
 		
+		Scanner sc = new Scanner(System.in);
 		while (true) {
-			
+			int selected = askIntent(sc);
+			switch (selected) {
+			case 1:
+				System.out.println(fetchSubscribers().toString());
+				break;
+			case 2:
+				broadcast();
+				break;
+			case 3:
+				pushTopic();
+				break;
+			}
 			
 		}
 
@@ -52,6 +69,7 @@ public class Worker {
 			System.out.println("Error in Worker Constructor");
 			System.exit(1);
 		}
+		
 	}
 
 	public void connect() {
@@ -60,6 +78,7 @@ public class Worker {
 			System.out.println("Worker waiting for client to connect");
 			try {
 				Socket socket = ss.accept();
+				socketList.add(socket);
 				System.out.println("Client connected from " + socket.getInetAddress());
 
 				Subscriber s = new Subscriber(socket, id, topList);
@@ -74,14 +93,71 @@ public class Worker {
 		
 	}
 
-	// Adds a message of the message queue
-	// public void insertMessage(Message msg) {
-	// msgQueue.add(msg);
-	// }
-
 	// Retrieves the mapping of topics to subscribers
-	public ConcurrentHashMap<String, Message> fetchSubscribers() {
+	public static ConcurrentHashMap<String, Message> fetchSubscribers() {
 		return Worker.topSubMap;
+	}
+	
+	public static void broadcast() {
+		System.out.println("Enter the message to be broadcasted");
+		Scanner sc = new Scanner (System.in);
+		String line = sc.nextLine();
+		if (line == "") return;
+		for (Socket socket : socketList) {
+			try(PrintWriter pw = new PrintWriter(socket.getOutputStream(), true)) {
+				if (line != null) {
+					pw.println(line);
+				}
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public static void pushTopic() {
+		System.out.println("Enter the name of the desired topic, here are the available ones:");
+		System.out.println(topics.toString());
+		Scanner sc = new Scanner(System.in);
+		String topic = sc.nextLine();
+		if (topic !="") {
+			System.out.println("Enter the message");
+			String message = sc.nextLine();
+			if (message != "") {
+				Content c = new Content(topic, message);
+				topSubMap.get(topic).content.add(c);
+				System.out.println("New message added: " + c.toString());
+			}
+		} else {
+			System.out.println("Topic Not Found");
+		}
+	}
+	
+	
+	public static int askIntent(Scanner sc) {
+		System.out.println("\nPlease select by entering a number:");
+		System.out.println("1: List All subscribers");
+		System.out.println("2: Broadcast to all subscribers");
+		System.out.println("3: Push to a topic");
+		int selection = 0;
+		boolean selected = false;
+		do {
+			try {
+				selection = sc.nextInt();
+			} catch (NoSuchElementException e) {
+				System.out.println("Not valid: try again");
+				continue;
+			}
+			if (selection >=1 && selection <= 3) {
+				selected = true;	
+			} else {
+				System.out.println("Not valid: try again");
+			}
+			
+		} while (!selected);
+		
+		return selection;
+		
 	}
 
 }

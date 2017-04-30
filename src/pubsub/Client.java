@@ -54,8 +54,11 @@ public class Client {
 				while (true) {
 					String topic = read.readLine();
 					String content = read.readLine();
-					System.out.printf("\nNew content in [%s]\n", topic);
-					System.out.println(content);
+					if (topic != null && content != null ) {
+						System.out.printf("\nNew content in [%s]\n", topic);
+						System.out.println(content);	
+					}
+					
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
