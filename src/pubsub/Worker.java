@@ -1,7 +1,6 @@
 package pubsub;
 
 import java.util.ArrayList;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import pubsub.Message;
@@ -37,9 +36,8 @@ public class Worker {
 		    }
 		}).start();
 		
-		Scanner sc = new Scanner(System.in);
 		while (true) {
-			int selected = askIntent(sc);
+			int selected = askIntent();
 			switch (selected) {
 			case 1:
 				System.out.println(fetchSubscribers().toString());
@@ -104,8 +102,10 @@ public class Worker {
 		String line = sc.nextLine();
 		if (line == "") return;
 		for (Socket socket : socketList) {
-			try(PrintWriter pw = new PrintWriter(socket.getOutputStream(), true)) {
+			try {
+				PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
 				if (line != null) {
+					pw.println("System Broadcast");
 					pw.println(line);
 				}
 				
@@ -134,7 +134,8 @@ public class Worker {
 	}
 	
 	
-	public static int askIntent(Scanner sc) {
+	public static int askIntent() {
+		Scanner sc = new Scanner (System.in);
 		System.out.println("\nPlease select by entering a number:");
 		System.out.println("1: List All subscribers");
 		System.out.println("2: Broadcast to all subscribers");
@@ -142,17 +143,13 @@ public class Worker {
 		int selection = 0;
 		boolean selected = false;
 		do {
-			try {
+		
 				selection = sc.nextInt();
-			} catch (NoSuchElementException e) {
-				System.out.println("Not valid: try again");
-				continue;
-			}
-			if (selection >=1 && selection <= 3) {
-				selected = true;	
-			} else {
-				System.out.println("Not valid: try again");
-			}
+				if (selection >=1 && selection <= 3) {
+					selected = true;	
+				} else {
+					System.out.println("Not valid: try again");
+				}
 			
 		} while (!selected);
 		

@@ -69,8 +69,14 @@ public class Client {
 	}
 
 	public static void main(String[] args) {
-
-		try (Socket s = new Socket(HOST, PORT);
+		Socket s = null;
+		try {
+			s = new Socket(HOST, PORT);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try (
 				BufferedReader read = new BufferedReader
 						(new InputStreamReader(s.getInputStream()));
 				PrintStream ps = new PrintStream(s.getOutputStream());
