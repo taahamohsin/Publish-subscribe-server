@@ -9,11 +9,12 @@ Subscribers have the following options:
 <li> Publish a message to a specific topic </li>
 <li> Subscribe to a topic by entering input in the following format: "Subscribe: |topicname|" </li>
 <li> Unsubscribe from a topic that they are presently subscribed to by entering input in the following format: "Unsubscribe: |topicname|" </li>
+<li> View all available topics as a list by entering input in the following format: "All Topics"</li>
 <li> View the list of topics they are currently subscribed to by entering the following phrase: "View Topics"
 </ol>
 
 For option (2), if the topic does not already exist, the topic gets created and added to the list of available topics.
-For option (3), if the subscriber is not subscribed to the given topic, or the topic does not exist, the subscriber is sent an error message.
+For option (3), if the subscriber is not subscribed to the given topic, or the topic does not exist, the subscriber is sent an error message. When a subscriber unsubscribes from a given topic, that does NOT cause the topic to be removed from the list of available topics. A subscriber may therefore re-subscribe to a topic they previously unsubscribed from.
 
 The server has the following potential actions:
 <ol>

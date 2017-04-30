@@ -40,7 +40,7 @@ public class Worker {
 
 
 		while (true) {
-			printSelections();
+//			printSelections();
 			
 			System.out.println(socketList.size());
 			int selected = askIntent();
