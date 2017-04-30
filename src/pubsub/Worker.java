@@ -132,13 +132,17 @@ public class Worker {
 		}
 	}
 
-
-	public static int askIntent() {
-		Scanner sc = new Scanner (System.in);
+	public static void printSelections() {
 		System.out.println("\nPlease select by entering a number:");
 		System.out.println("1: List all topics");
 		System.out.println("2: Broadcast to all subscribers");
 		System.out.println("3: Push to a topic");
+	}
+
+
+	public static int askIntent() {
+		Scanner sc = new Scanner (System.in);
+		printSelections();
 		int selection = 0;
 		boolean selected = false;
 		do {

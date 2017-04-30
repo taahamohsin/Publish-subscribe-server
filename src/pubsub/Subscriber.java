@@ -76,8 +76,11 @@ public class Subscriber extends Thread {
 
 	public void addTopic(String topic) {
 		if (myTopicMap.containsKey(topic)) {
-			System.out.println("already subscribed to");
+			writer.println("System Warning");
+			writer.println("You are already subscribed to: "+ topic);
 		} else {
+			writer.println("System Message");
+			writer.println("You subscribed to: "+ topic);
 			myTopicMap.put(topic, 0);
 		}
 		if (!Worker.topSubMap.containsKey(topic)) {
@@ -89,6 +92,8 @@ public class Subscriber extends Thread {
 	public void removeTopic(String topic) {
 		if (myTopicMap.containsKey(topic)) {
 			myTopicMap.remove(topic);
+			writer.println("System Message");
+			writer.println("You unsubscribed: "+ topic);
 		} else {
 			writer.println("System Warning");
 			writer.println("You're not subscribed to: "+ topic);
@@ -131,7 +136,7 @@ public class Subscriber extends Thread {
 					} else if (line.contains("Unsubscribe:")) {
 						String[] arr = line.split(": ");
 						removeTopic(arr[1]);
-					} else if(line.contains("Topic:")) {
+					} else if(line.contains("Topic")) {
 						String[] arr = line.split(": ");
 						if (arr.length < 2) {
 							continue;
