@@ -1,10 +1,13 @@
 package pubsub;
 
+import java.util.ArrayList;
+
 public class Content {
 
 	private String pLoad; // payload for the message
 	private String topic; // the topic to which it pertains
 	private int read;
+	protected ArrayList<Integer> arr;
 
 	// Default constructor for the Message class
 	public Content() {
@@ -16,6 +19,7 @@ public class Content {
 		this.pLoad = load;
 		this.topic = topic;
 		this.read = 0;
+		arr = new ArrayList<Integer>();
 	}
 
 	/* Accessor methods for the Message class */
