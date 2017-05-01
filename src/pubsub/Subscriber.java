@@ -141,14 +141,24 @@ public class Subscriber extends Thread {
 						writer.println("List of All Topics");
 						writer.println(Worker.topSubMap.keySet().toString());
 					} else if (line.contains("Post")) {
-						String[] arr = line.split(" ");
-						if (arr.length < 3) {
+						Scanner lineScanner = new Scanner(line);
+						lineScanner.next();
+						line = lineScanner.nextLine();
+						line = line.substring(1);
+						String[] arr = line.split(": ");
+						if (arr.length < 2) {
 							continue;
 						}
-						Content c = new Content(arr[1].substring(0, arr[1].length() - 2), arr[3]);
+						if (!Worker.topSubMap.keySet().contains(arr[0])) {
+							writer.println("System Warning");
+							writer.println( arr[0] + " does not exist");
+							continue;
+						}
+						Content c = new Content(arr[0], arr[1]);
 						System.out.println("New Message received from Client" + this.thread_id);
 						// System.out.println(c.toString());
 						Worker.topSubMap.get(c.fetchTopic()).content.add(c);
+						lineScanner.close();
 					}
 					Worker.printSelections();
 				}
